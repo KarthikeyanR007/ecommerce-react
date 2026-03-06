@@ -129,29 +129,41 @@ const Dashboard = () => {
         <div className="widget actions-widget">
           <h3>Quick Actions</h3>
           <div className="actions-grid">
-            <button className="action-btn" type="button">
-              <span className="action-icon">
+            <button className="quick-action quick-action-add" type="button">
+              <span className="quick-action-icon">
                 <Plus size={18} />
               </span>
-              <span className="action-label">Add Product</span>
+              <span className="quick-action-label">
+                <span className="quick-action-title">Add</span>
+                <span className="quick-action-subtitle">Product</span>
+              </span>
             </button>
-            <button className="action-btn" type="button">
-              <span className="action-icon">
+            <button className="quick-action quick-action-orders" type="button">
+              <span className="quick-action-icon">
                 <ShoppingCart size={18} />
               </span>
-              <span className="action-label">View Orders</span>
+              <span className="quick-action-label">
+                <span className="quick-action-title">View</span>
+                <span className="quick-action-subtitle">Orders</span>
+              </span>
             </button>
-            <button className="action-btn" type="button">
-              <span className="action-icon">
+            <button className="quick-action quick-action-users" type="button">
+              <span className="quick-action-icon">
                 <Users size={18} />
               </span>
-              <span className="action-label">Manage Users</span>
+              <span className="quick-action-label">
+                <span className="quick-action-title">Manage</span>
+                <span className="quick-action-subtitle">Users</span>
+              </span>
             </button>
-            <button className="action-btn" type="button">
-              <span className="action-icon">
+            <button className="quick-action quick-action-report" type="button">
+              <span className="quick-action-icon">
                 <BarChart3 size={18} />
               </span>
-              <span className="action-label">Generate Report</span>
+              <span className="quick-action-label">
+                <span className="quick-action-title">Generate</span>
+                <span className="quick-action-subtitle">Report</span>
+              </span>
             </button>
           </div>
         </div>
