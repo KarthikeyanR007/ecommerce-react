@@ -1,0 +1,45 @@
+/* MainLayout.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f8fafc;
+}
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.3s ease;
+  margin-left: 280px; /* Width of expanded sidebar */
+  width: calc(100% - 280px);
+}
+
+.main-content.expanded {
+  margin-left: 80px; /* Width of collapsed sidebar */
+  width: calc(100% - 80px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .main-content.expanded {
+    margin-left: 0;
+  }
+}
