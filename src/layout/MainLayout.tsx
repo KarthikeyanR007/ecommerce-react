@@ -6,6 +6,8 @@ import Dashboard from "../pages/Dashboard/Dashboard";
 import Users from "../pages/Users/Users";
 import Products from "../pages/Products/Products";
 import AddProduct from "../pages/Products/AddProduct";
+import Categories from "../pages/Categories/Categories";
+import AddCategory from "../pages/Categories/AddCategory";
 import "./MainLayout.css";
 
 const MainLayout = () => {
@@ -28,6 +30,8 @@ const MainLayout = () => {
             <Route path="/users" element={<Users />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/new" element={<AddProduct />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/categories/new" element={<AddCategory />} />
             {/* Add other routes as needed */}
           </Routes>
         </div>

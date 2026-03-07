@@ -4,6 +4,7 @@ import {
   ChevronLeft,
   ChevronRight,
   LayoutDashboard,
+  LayoutGrid,
   LogOut,
   Package,
   Search,
@@ -32,6 +33,7 @@ const Sidebar = ({ collapsed, toggleSidebar }: SidebarProps) => {
     { id: "users", label: "Users", icon: Users, path: "/users" },
     { id: "orders", label: "Orders", icon: ShoppingBag },
     { id: "products", label: "Products", icon: Package, path: "/products" },
+    { id: "categories", label: "Categories", icon: LayoutGrid, path: "/categories" },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
     { id: "settings", label: "Settings", icon: Settings },
   ];
