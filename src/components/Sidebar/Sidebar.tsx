@@ -31,7 +31,7 @@ const Sidebar = ({ collapsed, toggleSidebar }: SidebarProps) => {
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
     { id: "users", label: "Users", icon: Users, path: "/users" },
     { id: "orders", label: "Orders", icon: ShoppingBag },
-    { id: "products", label: "Products", icon: Package },
+    { id: "products", label: "Products", icon: Package, path: "/products" },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
     { id: "settings", label: "Settings", icon: Settings },
   ];

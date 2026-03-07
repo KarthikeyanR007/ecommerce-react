@@ -4,6 +4,8 @@ import Sidebar from "../components/Sidebar/Sidebar";
 import Navbar from "../components/Navbar/Navbar";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Users from "../pages/Users/Users";
+import Products from "../pages/Products/Products";
+import AddProduct from "../pages/Products/AddProduct";
 import "./MainLayout.css";
 
 const MainLayout = () => {
@@ -24,6 +26,8 @@ const MainLayout = () => {
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/users" element={<Users />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/products/new" element={<AddProduct />} />
             {/* Add other routes as needed */}
           </Routes>
         </div>
