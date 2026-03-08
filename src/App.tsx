@@ -40,6 +40,7 @@ function App() {
               <Route path="/products/new" element={<AddProduct />} />
               <Route path="/categories" element={<Categories />} />
               <Route path="/categories/new" element={<AddCategory />} />
+              <Route path="/categories/edit/:id" element={<AddCategory />} />
             </Route>
           </Route>
 
