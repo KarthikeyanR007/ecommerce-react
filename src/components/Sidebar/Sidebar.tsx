@@ -18,6 +18,7 @@ import "./Sidebar.css";
 interface SidebarProps {
   collapsed: boolean;
   toggleSidebar: () => void;
+  onLogout: () => void;
 }
 
 interface MenuItem {
@@ -27,7 +28,7 @@ interface MenuItem {
   path?: string;
 }
 
-const Sidebar = ({ collapsed, toggleSidebar }: SidebarProps) => {
+const Sidebar = ({ collapsed, toggleSidebar, onLogout }: SidebarProps) => {
   const menuItems: MenuItem[] = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
     { id: "users", label: "Users", icon: Users, path: "/users" },
@@ -92,7 +93,7 @@ const Sidebar = ({ collapsed, toggleSidebar }: SidebarProps) => {
             </div>
           )}
         </div>
-        <button className="logout-btn" type="button">
+        <button className="logout-btn" type="button" onClick={onLogout}>
           <LogOut size={20} />
           {!collapsed && <span>Logout</span>}
         </button>

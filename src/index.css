@@ -1,0 +1,23 @@
+@import "tailwindcss";
+@source "./**/*.{js,jsx,ts,tsx}";
+@source "../index.html";
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}

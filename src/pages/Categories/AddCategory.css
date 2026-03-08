@@ -113,7 +113,8 @@
 
 .add-category-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.85fr);
+  /* grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.85fr); */
+  grid-template-columns: 1fr;
   gap: 24px;
 }
 
@@ -446,4 +447,26 @@
   .add-category-hero h1 {
     font-size: 2.6rem;
   }
+}
+.image-preview {
+  position: relative;
+  margin-top: 10px;
+  width: 80px;
+}
+
+.image-preview img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.remove-image {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 4px;
 }

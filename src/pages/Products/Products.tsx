@@ -38,80 +38,83 @@ const Products = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<"all" | ProductStatus>("all");
 
-  const products: Product[] = [
-    {
-      id: 1,
-      name: "CloudFlex Running Shoes",
-      category: "Footwear",
-      price: 129.99,
-      stock: 42,
-      status: "in_stock",
-      rating: 4.7,
-      sales: 1280,
-      image:
-        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=60",
-    },
-    {
-      id: 2,
-      name: "Aether Noise Cancelling Headphones",
-      category: "Electronics",
-      price: 249.0,
-      stock: 12,
-      status: "low_stock",
-      rating: 4.8,
-      sales: 920,
-      image:
-        "https://images.unsplash.com/photo-1518442386-f92b9b9e2a36?w=800&auto=format&fit=crop&q=60",
-    },
-    {
-      id: 3,
-      name: "Luna Ceramic Skin Set",
-      category: "Home",
-      price: 78.5,
-      stock: 0,
-      status: "out_of_stock",
-      rating: 4.5,
-      sales: 310,
-      image:
-        "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=800&auto=format&fit=crop&q=60",
-    },
-    {
-      id: 4,
-      name: "Nova Smartwatch Pro",
-      category: "Electronics",
-      price: 199.99,
-      stock: 58,
-      status: "in_stock",
-      rating: 4.6,
-      sales: 1540,
-      image:
-        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=60",
-    },
-    {
-      id: 5,
-      name: "Sage Linen Jacket",
-      category: "Apparel",
-      price: 149.0,
-      stock: 16,
-      status: "low_stock",
-      rating: 4.4,
-      sales: 670,
-      image:
-        "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&auto=format&fit=crop&q=60",
-    },
-    {
-      id: 6,
-      name: "Aurora Coffee Station",
-      category: "Home",
-      price: 89.0,
-      stock: 34,
-      status: "in_stock",
-      rating: 4.3,
-      sales: 540,
-      image:
-        "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&auto=format&fit=crop&q=60",
-    },
-  ];
+  const products = useMemo<Product[]>(
+    () => [
+      {
+        id: 1,
+        name: "CloudFlex Running Shoes",
+        category: "Footwear",
+        price: 129.99,
+        stock: 42,
+        status: "in_stock",
+        rating: 4.7,
+        sales: 1280,
+        image:
+          "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=60",
+      },
+      {
+        id: 2,
+        name: "Aether Noise Cancelling Headphones",
+        category: "Electronics",
+        price: 249.0,
+        stock: 12,
+        status: "low_stock",
+        rating: 4.8,
+        sales: 920,
+        image:
+          "https://images.unsplash.com/photo-1518442386-f92b9b9e2a36?w=800&auto=format&fit=crop&q=60",
+      },
+      {
+        id: 3,
+        name: "Luna Ceramic Skin Set",
+        category: "Home",
+        price: 78.5,
+        stock: 0,
+        status: "out_of_stock",
+        rating: 4.5,
+        sales: 310,
+        image:
+          "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=800&auto=format&fit=crop&q=60",
+      },
+      {
+        id: 4,
+        name: "Nova Smartwatch Pro",
+        category: "Electronics",
+        price: 199.99,
+        stock: 58,
+        status: "in_stock",
+        rating: 4.6,
+        sales: 1540,
+        image:
+          "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=60",
+      },
+      {
+        id: 5,
+        name: "Sage Linen Jacket",
+        category: "Apparel",
+        price: 149.0,
+        stock: 16,
+        status: "low_stock",
+        rating: 4.4,
+        sales: 670,
+        image:
+          "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&auto=format&fit=crop&q=60",
+      },
+      {
+        id: 6,
+        name: "Aurora Coffee Station",
+        category: "Home",
+        price: 89.0,
+        stock: 34,
+        status: "in_stock",
+        rating: 4.3,
+        sales: 540,
+        image:
+          "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&auto=format&fit=crop&q=60",
+      },
+    ],
+    [],
+  );
 
   const stats: Stat[] = [
     { label: "Active Products", value: "1,284", Icon: Package },

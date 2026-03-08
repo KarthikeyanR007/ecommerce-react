@@ -1,42 +1,34 @@
 import { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import Sidebar from "../components/Sidebar/Sidebar";
 import Navbar from "../components/Navbar/Navbar";
-import Dashboard from "../pages/Dashboard/Dashboard";
-import Users from "../pages/Users/Users";
-import Products from "../pages/Products/Products";
-import AddProduct from "../pages/Products/AddProduct";
-import Categories from "../pages/Categories/Categories";
-import AddCategory from "../pages/Categories/AddCategory";
+import { clearAuthToken } from "../services/authStorage";
 import "./MainLayout.css";
 
 const MainLayout = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setSidebarCollapsed((prev) => !prev);
   };
 
+  const handleLogout = () => {
+    clearAuthToken();
+    toast.success("You have been signed out.");
+    navigate("/login", { replace: true });
+  };
+
   return (
-    <Router>
-      <div className="app-layout">
-        <Sidebar collapsed={sidebarCollapsed} toggleSidebar={toggleSidebar} />
-        
-        <div className={`main-content ${sidebarCollapsed ? "expanded" : ""}`}>
-          <Navbar toggleSidebar={toggleSidebar} />
-          <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/products/new" element={<AddProduct />} />
-            <Route path="/categories" element={<Categories />} />
-            <Route path="/categories/new" element={<AddCategory />} />
-            {/* Add other routes as needed */}
-          </Routes>
-        </div>
+    <div className="app-layout">
+      <Sidebar collapsed={sidebarCollapsed} toggleSidebar={toggleSidebar} onLogout={handleLogout} />
+
+      <div className={`main-content ${sidebarCollapsed ? "expanded" : ""}`}>
+        <Navbar toggleSidebar={toggleSidebar} />
+        <Outlet />
       </div>
-    </Router>
+    </div>
   );
 };
 
