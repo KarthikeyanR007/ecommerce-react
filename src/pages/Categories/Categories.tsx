@@ -4,7 +4,6 @@ import { Boxes, Search, Trash2 , Pencil, Eye } from "lucide-react";
 import "./Categories.css";
 import { api } from "../../services/api";
 
-type CategoryTier = "signature" | "growth" | "seasonal";
 
 interface Category {
   category_id: number;
@@ -28,7 +27,6 @@ const statusLabel: Record<number, { label: string; cls: string }> = {
 
 const Categories = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [tierFilter, setTierFilter] = useState<"all" | CategoryTier>("all");
   const [categories, setCategories] = useState<Category[]>([]);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
@@ -40,7 +38,7 @@ const Categories = () => {
         category.category_description.toLowerCase().includes(searchTerm.toLowerCase());
       return matchesSearch;
     });
-  }, [categories, searchTerm, tierFilter]);
+  }, [categories, searchTerm]);
 
   useEffect(() => {
     getCategoriesList();
