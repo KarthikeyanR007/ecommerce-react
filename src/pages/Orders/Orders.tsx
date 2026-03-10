@@ -36,22 +36,12 @@ interface Order {
   items?: OrderItem[];
 }
 
-// interface PaginatedOrders {
-//   data: Order[];
-//   total: number;
-//   per_page: number;
-//   current_page: number;
-//   last_page: number;
-// }
-
-// interface OrderResponse {
-//   data: PaginatedOrders | Order[];
-//   total?: number;
-//   per_page?: number;
-//   current_page?: number;
-//   last_page?: number;
-//   message: string;
-// }
+interface DeliveryBoy {
+  id: number;
+  name: string;
+  phone: string;
+  is_active: boolean;
+}
 
 // ── Config ─────────────────────────────────────────────────────────────────
 const PER_PAGE = 10;
@@ -73,6 +63,8 @@ const orderStatusConfig: Record<OrderStatus, { label: string; icon: React.ReactN
 // ── Component ──────────────────────────────────────────────────────────────
 const Orders = () => {
   const [orders, setOrders]               = useState<Order[]>([]);
+  const [deliveryBoys, setDeliveryBoys]   = useState<DeliveryBoy[]>([]);
+  const [assigningOrderId, setAssigningOrderId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm]       = useState("");
   const [paymentFilter, setPaymentFilter] = useState<"all" | PaymentStatus>("all");
   const [statusFilter, setStatusFilter]   = useState<"all" | OrderStatus>("all");
@@ -83,7 +75,7 @@ const Orders = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [drawerOpen, setDrawerOpen]       = useState(false);
 
-  // ── Fetch ────────────────────────────────────────────────────────────────
+  // ── Fetch Orders ─────────────────────────────────────────────────────────
   const getOrdersList = useCallback(async (page: number) => {
     setLoading(true);
     try {
@@ -110,9 +102,47 @@ const Orders = () => {
     }
   }, []);
 
+  // ── Fetch Delivery Boys ───────────────────────────────────────────────────
+  const getDeliveryBoys = useCallback(async () => {
+    try {
+      const res = await api.get("deliveryboy/getall?per_page=100");
+      const body = res.data;
+      setDeliveryBoys(body.data ?? []);
+    } catch (error) {
+      console.error("Failed to fetch delivery boys:", error);
+    }
+  }, []);
+
   useEffect(() => {
     getOrdersList(1);
+    getDeliveryBoys();
   }, []);
+
+  // ── Assign Delivery Boy ───────────────────────────────────────────────────
+  const assignDeliveryBoy = async (orderId: number, deliveryBoyId: number) => {
+    setAssigningOrderId(orderId);
+    try {
+      await api.post(`orders/assign-delivery-boy/${orderId}`, {
+        delivery_boy_id: deliveryBoyId,
+      });
+      // optimistic local update
+      setOrders(prev =>
+        prev.map(o =>
+          o.user_order_id === orderId
+            ? { ...o, delivery_boy_id: deliveryBoyId }
+            : o
+        )
+      );
+      // update drawer if open
+      if (selectedOrder?.user_order_id === orderId) {
+        setSelectedOrder(prev => prev ? { ...prev, delivery_boy_id: deliveryBoyId } : prev);
+      }
+    } catch (error) {
+      console.error("Failed to assign delivery boy:", error);
+    } finally {
+      setAssigningOrderId(null);
+    }
+  };
 
   // ── Derived stats ────────────────────────────────────────────────────────
   const stats = useMemo(() => {
@@ -180,6 +210,11 @@ const Orders = () => {
   const closeDrawer = () => {
     setDrawerOpen(false);
     setTimeout(() => setSelectedOrder(null), 300);
+  };
+
+  const getDeliveryBoyName = (id: number | null) => {
+    if (!id) return "Not assigned";
+    return deliveryBoys.find(db => db.id === id)?.name ?? `ID #${id}`;
   };
 
   return (
@@ -286,13 +321,14 @@ const Orders = () => {
                 <th>Delivery Date</th>
                 <th>Payment</th>
                 <th>Status</th>
+                <th>Delivery Boy</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="ord-empty">
+                  <td colSpan={9} className="ord-empty">
                     <div className="ord-loading">
                       <div className="ord-spinner" />
                       Loading orders…
@@ -344,6 +380,30 @@ const Orders = () => {
                           </span>
                         ) : <span className="ord-na">—</span>}
                       </td>
+
+                      {/* ── Delivery Boy Assignment ── */}
+                      <td>
+                        <div className="ord-assign-wrap">
+                          {assigningOrderId === order.user_order_id ? (
+                            <div className="ord-spinner-sm" />
+                          ) : (
+                            <select
+                              className="ord-assign-select"
+                              value={order.delivery_boy_id ?? ""}
+                              onChange={e => assignDeliveryBoy(order.user_order_id, Number(e.target.value))}
+                            >
+                              <option value="" disabled>Assign…</option>
+                              {deliveryBoys
+                                .filter(db => db.is_active)
+                                .map(db => (
+                                  <option key={db.id} value={db.id}>{db.name}</option>
+                                ))
+                              }
+                            </select>
+                          )}
+                        </div>
+                      </td>
+
                       <td>
                         <button
                           className="ord-view-btn"
@@ -359,7 +419,7 @@ const Orders = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan={8} className="ord-empty">No orders found.</td>
+                  <td colSpan={9} className="ord-empty">No orders found.</td>
                 </tr>
               )}
             </tbody>
@@ -453,13 +513,39 @@ const Orders = () => {
                       <span className="ord-drawer-info-value">{formatDate(selectedOrder.delivery_date)}</span>
                     </div>
                     <div className="ord-drawer-info-item">
-                      <span className="ord-drawer-info-label">Delivery Boy ID</span>
-                      <span className="ord-drawer-info-value">{selectedOrder.delivery_boy_id ?? "Not assigned"}</span>
+                      <span className="ord-drawer-info-label">Delivery Boy</span>
+                      <span className="ord-drawer-info-value">
+                        {getDeliveryBoyName(selectedOrder.delivery_boy_id)}
+                      </span>
                     </div>
                     <div className="ord-drawer-info-item">
                       <span className="ord-drawer-info-label">Order Date</span>
                       <span className="ord-drawer-info-value">{formatDate(selectedOrder.created_at)}</span>
                     </div>
+                  </div>
+                </div>
+
+                {/* Assign delivery boy inside drawer */}
+                <div className="ord-drawer-section">
+                  <h3 className="ord-drawer-section-title">Assign Delivery Boy</h3>
+                  <div className="ord-assign-wrap ord-assign-drawer">
+                    {assigningOrderId === selectedOrder.user_order_id ? (
+                      <div className="ord-spinner-sm" />
+                    ) : (
+                      <select
+                        className="ord-assign-select"
+                        value={selectedOrder.delivery_boy_id ?? ""}
+                        onChange={e => assignDeliveryBoy(selectedOrder.user_order_id, Number(e.target.value))}
+                      >
+                        <option value="" disabled>Select delivery boy…</option>
+                        {deliveryBoys
+                          .filter(db => db.is_active)
+                          .map(db => (
+                            <option key={db.id} value={db.id}>{db.name} — {db.phone}</option>
+                          ))
+                        }
+                      </select>
+                    )}
                   </div>
                 </div>
 

@@ -717,3 +717,52 @@
   .ord-stats { grid-template-columns: 1fr; }
   .ord-card-footer { flex-direction: column; align-items: flex-start; }
 }
+
+/* ── Delivery Boy Assignment ───────────────────────────────────────────── */
+.ord-assign-wrap {
+  min-width: 140px;
+}
+
+.ord-assign-drawer {
+  min-width: 100%;
+}
+
+.ord-assign-select {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1.5px solid #e0ddf5;
+  background: #f5f4f8;
+  font-size: 13px;
+  font-family: inherit;
+  color: #0a0a0f;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: auto;
+}
+
+.ord-assign-select:focus {
+  border-color: #6c4fd8;
+  box-shadow: 0 0 0 3px rgba(108, 79, 216, 0.1);
+  background: #fff;
+}
+
+.ord-assign-select:hover {
+  border-color: #8b6fe8;
+}
+
+/* ── Small spinner for assignment loading ─────────────────────────────── */
+.ord-spinner-sm {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(108, 79, 216, 0.2);
+  border-top-color: #6c4fd8;
+  border-radius: 50%;
+  animation: ord-spin 0.7s linear infinite;
+  margin: 4px auto;
+}
+
+@keyframes ord-spin {
+  to { transform: rotate(360deg); }
+}
