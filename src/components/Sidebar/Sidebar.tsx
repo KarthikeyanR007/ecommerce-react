@@ -11,6 +11,7 @@ import {
   Settings,
   ShoppingBag,
   Users,
+  Truck
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import "./Sidebar.css";
@@ -30,13 +31,14 @@ interface MenuItem {
 
 const Sidebar = ({ collapsed, toggleSidebar, onLogout }: SidebarProps) => {
   const menuItems: MenuItem[] = [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
-    { id: "users", label: "Users", icon: Users, path: "/users" },
-    { id: "orders", label: "Orders", icon: ShoppingBag },
-    { id: "products", label: "Products", icon: Package, path: "/products" },
-    { id: "categories", label: "Categories", icon: LayoutGrid, path: "/categories" },
-    { id: "analytics", label: "Analytics", icon: BarChart3 },
-    { id: "settings", label: "Settings", icon: Settings },
+    { id: "dashboard",     label: "Dashboard",     icon: LayoutDashboard, path: "/dashboard"  },
+    { id: "users",         label: "Users",         icon: Users,           path: "/users"      },
+    { id: "orders",        label: "Orders",        icon: ShoppingBag,     path: "/orders"     }, // ← path added
+    { id: "products",      label: "Products",      icon: Package,         path: "/products"   },
+    { id: "categories",    label: "Categories",    icon: LayoutGrid,      path: "/categories" },
+    { id: "deliveryboys",  label: "Delivery Boys", icon: Truck,           path: "/deliveryboys" },
+    { id: "analytics",     label: "Analytics",     icon: BarChart3 },
+    { id: "settings",      label: "Settings",      icon: Settings },
   ];
 
   return (

@@ -8,6 +8,8 @@ import AddProduct from "./pages/Products/AddProduct";
 import EditProduct from "./pages/Products/EditProduct";
 import Categories from "./pages/Categories/Categories";
 import AddCategory from "./pages/Categories/AddCategory";
+import Orders from "./pages/Orders/Orders";           // ← new
+import DeliveryBoys from "./pages/DeliveryBoys/DeliveryBoys";
 import LoginPage from "./pages/Auth/LoginPage";
 import RegisterPage from "./pages/Auth/RegisterPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -29,20 +31,22 @@ function App() {
           <Route path="/" element={<HomeRedirect />} />
 
           <Route element={<PublicRoute />}>
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/login"    element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
           </Route>
 
           <Route element={<ProtectedRoute />}>
             <Route element={<MainLayout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/users" element={<Users />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/products/new" element={<AddProduct />} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/categories/new" element={<AddCategory />} />
-              <Route path="/categories/edit/:id" element={<AddCategory />} />
-              <Route path="/products/edit/:id" element={<EditProduct />} />
+              <Route path="/dashboard"              element={<Dashboard />} />
+              <Route path="/users"                  element={<Users />} />
+              <Route path="/orders"                 element={<Orders />} />      {/* ← new */}
+              <Route path="/products"               element={<Products />} />
+              <Route path="/products/new"           element={<AddProduct />} />
+              <Route path="/products/edit/:id"      element={<EditProduct />} />
+              <Route path="/categories"             element={<Categories />} />
+              <Route path="/categories/new"         element={<AddCategory />} />
+              <Route path="/categories/edit/:id"    element={<AddCategory />} />
+              <Route path="/deliveryboys"           element={<DeliveryBoys />} />
             </Route>
           </Route>
 
