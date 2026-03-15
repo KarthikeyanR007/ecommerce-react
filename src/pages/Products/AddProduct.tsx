@@ -9,11 +9,6 @@ interface Category {
   category_name: string;
 }
 
-interface CategoryResponse {
-  data: Category[];
-  message: string;
-}
-
 interface FormState {
   product_name: string;
   category_id: string;
@@ -40,55 +35,76 @@ const AddProduct = () => {
 
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [images, setImages] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [errors, setErrors] = useState<Partial<FormState>>({});
   const [submitting, setSubmitting] = useState(false);
 
-  // Fetch categories on mount
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await api.get<CategoryResponse>("categories/getall");
-        setCategories(res.data.data);
-        if (res.data.data.length > 0) {
-          setForm((prev) => ({
+        setCategoriesLoading(true);
+        const res = await api.get("categories/getall");
+        const result = res.data;
+
+        console.log("categories API response:", result); // debug
+
+        // Handle all response shapes:
+        // { data: { data: [...] } }  ← paginated
+        // { data: [...] }            ← simple wrapped
+        // [...]                      ← direct array
+        const categoryList: Category[] = Array.isArray(result?.data?.data)
+          ? result.data.data
+          : Array.isArray(result?.data)
+          ? result.data
+          : Array.isArray(result)
+          ? result
+          : [];
+
+        setCategories(categoryList);
+
+        if (categoryList.length > 0) {
+          setForm(prev => ({
             ...prev,
-            category_id: String(res.data.data[0].category_id),
+            category_id: String(categoryList[0].category_id),
           }));
         }
       } catch (err) {
         console.error("Failed to fetch categories:", err);
+        setCategories([]);
+      } finally {
+        setCategoriesLoading(false);
       }
     };
+
     fetchCategories();
   }, []);
 
-  // Revoke object URLs on unmount to avoid memory leaks
   useEffect(() => {
-    return () => previews.forEach((url) => URL.revokeObjectURL(url));
+    return () => previews.forEach(url => URL.revokeObjectURL(url));
   }, [previews]);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" }));
+    setForm(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: "" }));
   };
 
   const handleFiles = (files: FileList | null) => {
     if (!files) return;
-    const newFiles = Array.from(files).filter((f) => f.type.startsWith("image/"));
-    const newPreviews = newFiles.map((f) => URL.createObjectURL(f));
-    setImages((prev) => [...prev, ...newFiles]);
-    setPreviews((prev) => [...prev, ...newPreviews]);
+    const newFiles = Array.from(files).filter(f => f.type.startsWith("image/"));
+    const newPreviews = newFiles.map(f => URL.createObjectURL(f));
+    setImages(prev => [...prev, ...newFiles]);
+    setPreviews(prev => [...prev, ...newPreviews]);
   };
 
   const removeImage = (index: number) => {
     URL.revokeObjectURL(previews[index]);
-    setImages((prev) => prev.filter((_, i) => i !== index));
-    setPreviews((prev) => prev.filter((_, i) => i !== index));
+    setImages(prev => prev.filter((_, i) => i !== index));
+    setPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -98,8 +114,8 @@ const AddProduct = () => {
 
   const validate = (): boolean => {
     const newErrors: Partial<FormState> = {};
-    if (!form.product_name.trim()) newErrors.product_name = "Product name is required.";
-    if (!form.category_id) newErrors.category_id = "Please select a category.";
+    if (!form.product_name.trim())       newErrors.product_name        = "Product name is required.";
+    if (!form.category_id)               newErrors.category_id         = "Please select a category.";
     if (!form.product_description.trim()) newErrors.product_description = "Description is required.";
     if (!form.product_price || isNaN(Number(form.product_price)))
       newErrors.product_price = "Enter a valid price.";
@@ -114,14 +130,14 @@ const AddProduct = () => {
     setSubmitting(true);
     try {
       const formData = new FormData();
-      formData.append("product_name", form.product_name.trim());
-      formData.append("category_id", form.category_id);
+      formData.append("product_name",        form.product_name.trim());
+      formData.append("category_id",         form.category_id);
       formData.append("product_description", form.product_description.trim());
-      formData.append("product_price", form.product_price);
-      formData.append("discount_price", form.discount_price);
-      formData.append("product_stock", form.product_stock);
-      formData.append("product_status", status === "draft" ? "out_of_stock" : form.product_status);
-      images.forEach((img) => formData.append("product_image", img));
+      formData.append("product_price",       form.product_price);
+      formData.append("discount_price",      form.discount_price);
+      formData.append("product_stock",       form.product_stock);
+      formData.append("product_status",      status === "draft" ? "out_of_stock" : form.product_status);
+      images.forEach(img => formData.append("product_image", img));
 
       await api.post("products/add", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -200,12 +216,22 @@ const AddProduct = () => {
                   name="category_id"
                   value={form.category_id}
                   onChange={handleChange}
+                  disabled={categoriesLoading}
                 >
-                  {categories.map((cat) => (
-                    <option key={cat.category_id} value={String(cat.category_id)}>
-                      {cat.category_name}
-                    </option>
-                  ))}
+                  {categoriesLoading ? (
+                    <option value="">Loading categories...</option>
+                  ) : categories.length === 0 ? (
+                    <option value="">No categories found</option>
+                  ) : (
+                    <>
+                      <option value="" disabled>Select a category</option>
+                      {categories.map(cat => (
+                        <option key={cat.category_id} value={String(cat.category_id)}>
+                          {cat.category_name}
+                        </option>
+                      ))}
+                    </>
+                  )}
                 </select>
                 {errors.category_id && (
                   <span className="add-product-error">{errors.category_id}</span>
@@ -241,7 +267,7 @@ const AddProduct = () => {
             <div className="add-product-upload">
               <div
                 className="upload-panel"
-                onDragOver={(e) => e.preventDefault()}
+                onDragOver={e => e.preventDefault()}
                 onDrop={handleDrop}
               >
                 <ImagePlus size={22} />
@@ -256,7 +282,7 @@ const AddProduct = () => {
                   accept="image/*"
                   multiple
                   style={{ display: "none" }}
-                  onChange={(e) => handleFiles(e.target.files)}
+                  onChange={e => handleFiles(e.target.files)}
                 />
               </div>
 
@@ -312,7 +338,7 @@ const AddProduct = () => {
               </label>
 
               <label className="add-product-field">
-                <span>Discount</span>
+                <span>Discount Price</span>
                 <input
                   type="number"
                   name="discount_price"

@@ -9,8 +9,14 @@ interface Category {
   category_name: string;
 }
 
+interface PaginatedData {
+  current_page: number;
+  data: Category[];  // ← the actual array is here
+  total: number;
+  last_page: number;
+}
 interface CategoryResponse {
-  data: Category[];
+  data: PaginatedData;  // ← data is a pagination object, not Category[]
   message: string;
 }
 
@@ -72,7 +78,7 @@ const EditProduct = () => {
       try {
 
         const catRes = await api.get<CategoryResponse>("categories/getall");
-        setCategories(catRes.data.data);
+        setCategories(catRes.data.data.data);
 
         const prodRes = await api.get<ProductResponse>(`products/get/${id}`);
         const p = prodRes.data.data;
@@ -156,7 +162,7 @@ const EditProduct = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const submit = async (status: "published" | "draft") => {
+  const submit = async () => {
     if (!validate()) return;
     setSubmitting(true);
     try {
@@ -168,10 +174,6 @@ const EditProduct = () => {
       formData.append("product_discount", form.product_discount);
       formData.append("product_stock", form.product_stock);
       formData.append("product_discount", form.product_discount);
-    //   formData.append(
-    //     "product_status",
-    //     status === "draft" ? "out_of_stock" : form.product_status
-    //   );
 
       if (images.length > 0) {
         images.forEach((img) => formData.append("product_image", img));
@@ -218,7 +220,7 @@ const EditProduct = () => {
             className="add-product-btn ghost"
             type="button"
             disabled={submitting}
-            onClick={() => submit("draft")}
+            onClick={() => submit()}
           >
             {submitting ? "Saving…" : "Save as Draft"}
           </button>
@@ -226,7 +228,7 @@ const EditProduct = () => {
             className="add-product-btn primary"
             type="button"
             disabled={submitting}
-            onClick={() => submit("published")}
+            onClick={() => submit()}
           >
             {submitting ? "Updating…" : "Update Product"}
           </button>

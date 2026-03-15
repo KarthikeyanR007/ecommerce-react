@@ -587,3 +587,75 @@
     align-items: flex-start;
   }
 }
+
+/* Fix table column spacing */
+.users-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.users-table th:nth-child(1), /* checkbox */
+.users-table td:nth-child(1) {
+  width: 40px;
+}
+
+.users-table th:nth-child(2), /* user */
+.users-table td:nth-child(2) {
+  width: 22%;
+}
+
+.users-table th:nth-child(3), /* contact */
+.users-table td:nth-child(3) {
+  width: 22%;
+}
+
+.users-table th:nth-child(4), /* address */
+.users-table td:nth-child(4) {
+  width: 18%;
+}
+
+.users-table th:nth-child(5), /* status */
+.users-table td:nth-child(5) {
+  width: 12%;
+}
+
+.users-table th:nth-child(6), /* actions */
+.users-table td:nth-child(6) {
+  width: 120px;
+}
+
+/* Make action buttons visible */
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.users-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* Checkbox */
+.users-table colgroup col:nth-child(1),
+.users-table th:nth-child(1),
+.users-table td:nth-child(1) { width: 40px; }
+
+/* User */
+.users-table th:nth-child(2),
+.users-table td:nth-child(2) { width: 20%; }
+
+/* Contact */
+.users-table th:nth-child(3),
+.users-table td:nth-child(3) { width: 22%; }
+
+/* Address */
+.users-table th:nth-child(4),
+.users-table td:nth-child(4) { width: 16%; }
+
+/* Status */
+.users-table th:nth-child(5),
+.users-table td:nth-child(5) { width: 10%; }
+
+/* Actions */
+.users-table th:nth-child(6),
+.users-table td:nth-child(6) { width: 100px; }

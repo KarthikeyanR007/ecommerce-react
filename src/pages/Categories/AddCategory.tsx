@@ -25,35 +25,75 @@ const AddCategory = () => {
   });
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [existingImagePath, setExistingImagePath] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(isEditMode);
 
-  // Fetch existing category data in edit mode
+  
+
+  // useEffect(() => {
+  //   if (!isEditMode) return;
+
+  //   const fetchCategory = async () => {
+  //     try {
+  //       setFetching(true);
+  //       const response = await api.get(`categories/get/${id}`);
+  //       const category = response.data.data;
+
+  //       setForm({
+  //         name: category.category_name,
+  //         description: category.category_description,
+  //         image: null,
+  //       });
+
+  //       if (category.category_image) {
+  //         setExistingImagePath(category.category_image);
+  //         setImagePreview(IMAGE_BASE_URL + "/" + category.category_image);
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to fetch category:", error);
+  //     } finally {
+  //       setFetching(false);
+  //     }
+  //   };
+
+  //   fetchCategory();
+  // }, [id, isEditMode]);
+
+
   useEffect(() => {
-    if (!isEditMode) return;
+  if (!isEditMode) {
+    setFetching(false); // not edit mode, nothing to fetch
+    return;
+  }
 
-    const fetchCategory = async () => {
-      try {
-        setFetching(true);
-        const response = await api.get(`categories/get/${id}`);
-        const category = response.data.data;
-        setForm({
-          name: category.category_name,
-          description: category.category_description,
-          image: null,
-        });
-        if (category.category_image) {
-          setImagePreview(IMAGE_BASE_URL + "/" + category.category_image);
-        }
-      } catch (error) {
-        console.error("Failed to fetch category:", error);
-      } finally {
-        setFetching(false);
+  const fetchCategory = async () => {
+    try {
+      setFetching(true);
+      console.log('id  ',id);
+      const response = await api.get(`categories/get/${id}`);
+      const category = response.data.data;
+
+      setForm({
+        name: category.category_name,
+        description: category.category_description,
+        image: null,
+      });
+
+      if (category.category_image) {
+        setExistingImagePath(category.category_image);
+        setImagePreview(IMAGE_BASE_URL + "/" + category.category_image);
       }
-    };
+    } catch (error) {
+      console.error("Failed to fetch category:", error);
+    } finally {
+      setFetching(false);
+    }
+  };
 
-    fetchCategory();
-  }, [id, isEditMode]);
+  fetchCategory();
+}, [id, isEditMode]);
+
 
   const handleFieldChange =
     (field: "name" | "description") =>
@@ -71,24 +111,35 @@ const AddCategory = () => {
   const removeImage = () => {
     setForm((prev) => ({ ...prev, image: null }));
     setImagePreview(null);
+    setExistingImagePath("");
   };
 
   const handleSubmit = async () => {
     try {
       setLoading(true);
       const formData = new FormData();
-      formData.append("name", form.name);
-      formData.append("description", form.description);
+      formData.append("category_name", form.name);
+      formData.append("category_description", form.description);
+
       if (form.image) {
-        formData.append("image", form.image);
+        // New image selected — upload it
+        formData.append("category_image", form.image);
+      } else if (isEditMode && existingImagePath) {
+        // No new image — send existing path so backend keeps it
+        formData.append("category_image", existingImagePath);
       }
 
       if (isEditMode) {
-        await api.post(`categories/update/${id}`, formData);
+        await api.post(`categories/update/${id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
       } else {
-        await api.post("categories/add", formData);
+        await api.post("categories/add", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
         setForm({ name: "", description: "", image: null });
         setImagePreview(null);
+        setExistingImagePath("");
       }
 
       navigate("/categories");
@@ -139,7 +190,11 @@ const AddCategory = () => {
               <LayoutGrid size={18} />
               <div>
                 <h2>{isEditMode ? "Edit Category" : "Add Category"}</h2>
-                <p>{isEditMode ? "Update the category details below." : "Fill in the details to create a new category."}</p>
+                <p>
+                  {isEditMode
+                    ? "Update the category details below."
+                    : "Fill in the details to create a new category."}
+                </p>
               </div>
             </header>
 
